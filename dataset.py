@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-03-11 16:18:14
+LastEditTime: 2022-04-13 22:47:28
 '''
 import numpy as np
 import pandas as pd
@@ -12,6 +12,20 @@ from sklearn import preprocessing
 from scipy.stats import zscore
 import h5py
 import random
+# from torch.utils.data import Dataset
+import pickle
+
+# class RegressionDataset(Dataset):
+#     def __init__(self, x, y):
+#         self.x = x
+#         self.y = y
+#         self.length = x.shape[0]
+
+#     def __len__(self):
+#         return len(self.length)
+
+#     def __getitem__(self, index):
+#         return self.x[index], self.y[index]
 
 
 def get_achilles():
@@ -22,7 +36,7 @@ def get_achilles():
     df_ac = df.drop("DepMap_I", axis=1)
     df_ac.index = ["achilles" + str(i) for i in df_ac.index]
     df_ac = df_ac.dropna()
-    df_ac = df_ac.apply(zscore)
+    # df_ac = df_ac.apply(zscore)
     return df_ac
 
 
@@ -56,7 +70,7 @@ def get_string():
     df_string = pd.DataFrame(values.T, columns=string_genes)
     df_string.index = ["string_" + str(i) for i in df_string.index]
     df_string = df_string.dropna()
-    df_string = df_string.apply(zscore)
+    # df_string = df_string.apply(zscore)
     return df_string
 
 
@@ -69,38 +83,56 @@ def get_merged():
 
 def get_ifng():
     f = h5py.File("./cache/schmidt_2021_ifng.h5", "r")
-    s = pd.Series(f["covariates"][...], index=f["rownames"][...])
+    s = pd.Series(np.array(f["covariates"][...]).reshape((-1)),
+                  index=f["rownames"][...])
+    datagenes = [i.decode("utf-8") for i in s.index]
+    s.index = datagenes
     return s
 
 
 def get_zhuang():
     f = h5py.File("./cache/zhuang_2019.h5", "r")
-    s = pd.Series(f["covariates"][...], index=f["rownames"][...])
+    s = pd.Series(np.array(f["covariates"][:]).reshape((-1)),
+                  index=f["rownames"][:])
+    # datagenes = [i.decode("utf-8") for i in s.index]
+    # s.index = datagenes
     return s
+
+
+def get_my():
+    with open("./cache/mydataset.pkl", "rb") as f:
+        res = pickle.load(f)
+    return res
 
 
 def get_il2():
     f = f = h5py.File("./cache/schmidt_2021_il2.h5", "r")
-    s = pd.Series(f["covariates"][...], index=f["rownames"][...])
+    s = pd.Series(np.array(f["covariates"][:]).reshape((-1)),
+                  index=f["rownames"][...])
+    datagenes = [i.decode("utf-8") for i in s.index]
+    s.index = datagenes
     return s
 
 
 class BaseDataset():
-    def __init__(self, feature, target, ini=5) -> None:
-        self.predicts = target.index
-        df = pd.concat([feature, target], join="inner")
-        df = df.T
-        self.df = df
+    def __init__(self, feature, ini=5) -> None:
+        # self.predicts = target.index
+        # df = pd.concat([feature, target], join="inner")
+        # df = df.T
+        self.df = feature
         self.length = len(self.df)
         self.known = ini
         self.mask = np.zeros(len(self.df), dtype=bool)
-        self.knownlist = list(random.sample(range(self.length), k=ini))
-
-        # assure the training set has different labels
-        while len(np.unique(df.iloc[self.knownlist]["y"])) == 1:
+        self.index = list(feature.index)
+        if ini > 0:
             self.knownlist = list(random.sample(range(self.length), k=ini))
-        self.mask[self.knownlist] = True
-        self.index = list(df.index)
+
+            # assure the training set has different labels
+            # while len(np.unique(feature.iloc[self.knownlist]["y"])) == 1:
+            #     self.knownlist = list(random.sample(range(self.length), k=ini))
+            self.mask[self.knownlist] = True
+        else:
+            self.knownlist = []
 
     def __len__(self):
         return len(self.df)
@@ -138,8 +170,6 @@ class BaseDataset():
         return df
 
 
-class BaseDataset():
-    def __init__(self, feature, target):
-        self.predicts = target.index
-        fulldata = pd.concat([feature, target], join="inner")
-        self.fulldata = fulldata.T
+if __name__ == "__main__":
+    data = get_zhuang()
+    print(data)

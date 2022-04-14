@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-03-10 21:49:40
+LastEditTime: 2022-04-08 20:53:09
 '''
 import numpy as np
 from typing import AnyStr, List
@@ -13,14 +13,18 @@ from slingpy.models.abstract_base_model import AbstractBaseModel
 from genedisco.active_learning_methods.acquisition_functions.base_acquisition_function import \
     BaseBatchAcquisitionFunction
 
+
 class RandomBatchAcquisitionFunction(BaseBatchAcquisitionFunction):
-    def __call__(self,
-                 dataset_x: AbstractDataSource,
-                 batch_size: int,
-                 available_indices: List[AnyStr], 
-                 last_selected_indices: List[AnyStr] = None, 
-                 model: AbstractBaseModel = None,
-                 temperature: float = 0.9,
-                 ) -> List:
-        selected = np.random.choice(available_indices, size=batch_size, replace=False)
+    def __call__(
+        self,
+        dataset_x: AbstractDataSource,
+        batch_size: int,
+        available_indices: List[AnyStr],
+        last_selected_indices: List[AnyStr] = None,
+        model: AbstractBaseModel = None,
+        temperature: float = 0.9,
+    ) -> List:
+        selected = np.random.choice(available_indices,
+                                    size=batch_size,
+                                    replace=False)
         return selected
