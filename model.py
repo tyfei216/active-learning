@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-14 11:35:42
+LastEditTime: 2022-04-14 23:33:14
 '''
 import torch
 import torch.nn as nn
@@ -18,7 +18,7 @@ from torch.utils.data import random_split
 import numpy as np
 
 EPOCH = 700
-ITERS = 3000
+ITERS = 5000
 
 
 def getdataset(x, y1, y2=None):

@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-14 10:30:16
+LastEditTime: 2022-04-16 13:16:01
 '''
 import activeselect
 import pandas as pd
@@ -84,7 +84,7 @@ def simulatetwo(df, seed, method, feature_select=True):
 
                 valres_active[i, cnt, j] = model.test(m, ds)
                 if method == 'random':
-                    new_points = random.sample(range(len(du)), k=1)
+                    new_points = random.sample(range(len(du)), k=BATCH_SIZE)
                     for new_point in new_points:
                         trainds.addKnown(du.index[new_point])
 
@@ -182,11 +182,11 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                 # gm = Lasso().fit(x, y)
                 # d["pre"] = gm.predict(x)
                 test_x = testds.drop("y", axis=1).to_numpy()
+                if feature_select:
+                    test_x = test_x @ M
                 if deep:
                     test_y = testds["y"].to_numpy()
                     ds = model.getdataset(test_x, test_y)
-                if feature_select:
-                    test_x = test_x @ M
                 if deep:
                     testres_active[i, cnt, j] = model.test(m, ds)
                 else:
@@ -196,11 +196,11 @@ def simulate(df, seed, method, feature_select=True, deep=False):
 
                 du = trainds.getUnknown()
                 dux = du.drop("y", axis=1).to_numpy()
+                if feature_select:
+                    dux = dux @ M
                 if deep:
                     du_y = du["y"].to_numpy()
                     ds = model.getdataset(dux, du_y)
-                if feature_select:
-                    dux = dux @ M
                 if deep:
                     valres_active[i, cnt, j] = model.test(m, ds)
                 else:
@@ -208,7 +208,7 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                     valres_active[i, cnt,
                                   j] = mean_squared_error(du["y"], predict)
                 if method == 'random':
-                    new_points = random.sample(range(len(du)), k=1)
+                    new_points = random.sample(range(len(du)), k=BATCH_SIZE)
                     for new_point in new_points:
                         trainds.addKnown(du.index[new_point])
 
