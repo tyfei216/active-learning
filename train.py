@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-26 10:47:50
+LastEditTime: 2022-04-26 11:12:09
 '''
 import activeselect
 import pandas as pd
@@ -29,8 +29,11 @@ import model
 import torch
 
 NUM_SIMU = 1
-NUM_SAM = 15
-BATCH_SIZE = 5
+# NUM_SAM = 15
+# BATCH_SIZE = 5
+
+NUM_SAM = 100
+BATCH_SIZE = 10
 
 
 def feature_selection(x, y):

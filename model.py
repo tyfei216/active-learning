@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-25 22:52:51
+LastEditTime: 2022-04-26 11:11:07
 '''
 import torch
 import torch.nn as nn
@@ -101,8 +101,8 @@ class TwoLayer(nn.Module):
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
-        #x = torch.sigmoid(self.fc3(x))
-        x = torch.relu(self.fc3(x))
+        x = torch.sigmoid(self.fc3(x))
+        # x = torch.relu(self.fc3(x))
         x = self.fc4(x)
         return x.squeeze(1)
 
