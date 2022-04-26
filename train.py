@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-25 22:43:50
+LastEditTime: 2022-04-25 22:59:04
 '''
 import activeselect
 import pandas as pd
@@ -193,8 +193,7 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                     # print(np.max(test_x), np.min(test_x))
                     # for t in test_x:
                     #     print(t)
-                    ds = model.getdataset(np.zeros_like(test_x),
-                                          np.zeros_like(test_y))
+                    ds = model.getdataset(test_x, test_y)
                 if deep:
                     # pass
                     testres_active[i, cnt, j] = model.test(m, ds)
