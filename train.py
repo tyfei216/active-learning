@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-26 07:34:43
+LastEditTime: 2022-04-26 10:47:50
 '''
 import activeselect
 import pandas as pd
@@ -29,8 +29,8 @@ import model
 import torch
 
 NUM_SIMU = 1
-NUM_SAM = 100
-BATCH_SIZE = 10
+NUM_SAM = 15
+BATCH_SIZE = 5
 
 
 def feature_selection(x, y):
@@ -307,12 +307,62 @@ if __name__ == "__main__":
                          index_col=None)
         # print(df.shape)
         df = df.drop(0)
-        df = df[list(range(11))]
+        df = df[list(range(12))]
         df = df.dropna()
         print(df.shape)
         data = np.array(df[10])
+    elif args.dataset == "breastdeath":
+        df = pd.read_csv("./cache/Breast_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        data = np.array(df[11])
+    elif args.dataset == "breasttwo":
+        df = pd.read_csv("./cache/Breast_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        data = (np.array(df[10]), np.array(df[11]))
         # for i in data:
         #     print(i)
+    elif args.dataset == "blood":
+        df = pd.read_csv("./cache/Blood_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        data = np.array(df[10])
+    elif args.dataset == "blooddeath":
+        df = pd.read_csv("./cache/Blood_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        data = np.array(df[11])
+    elif args.dataset == "bloodtwo":
+        df = pd.read_csv("./cache/Blood_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        data = (np.array(df[10]), np.array(df[11]))
 
     else:
         print("dataset not available")
@@ -329,7 +379,16 @@ if __name__ == "__main__":
                          header=None,
                          index_col=None)
         df = df.drop(0)
-        df = df[list(range(11))]
+        df = df[list(range(12))]
+        df = df.dropna()
+        print(df.shape)
+        feature = df[list(range(9))].values
+    elif args.feature == "blood":
+        df = pd.read_csv("./cache/Blood_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        df = df.drop(0)
+        df = df[list(range(12))]
         df = df.dropna()
         print(df.shape)
         feature = df[list(range(9))].values
