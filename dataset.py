@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-13 22:47:28
+LastEditTime: 2022-04-17 18:26:33
 '''
 import numpy as np
 import pandas as pd
@@ -34,8 +34,10 @@ def get_achilles():
     strip_achilles = [x[:x.find(" ")] for x in genes_achilles]
     df.columns = strip_achilles
     df_ac = df.drop("DepMap_I", axis=1)
+    print(df_ac.shape)
     df_ac.index = ["achilles" + str(i) for i in df_ac.index]
     df_ac = df_ac.dropna()
+    print(df_ac.shape)
     # df_ac = df_ac.apply(zscore)
     return df_ac
 
@@ -67,9 +69,12 @@ def get_string():
     f.close()
     values = np.genfromtxt("./cache/string_human_mashup_vectors_d800.txt",
                            delimiter="\t")
+
     df_string = pd.DataFrame(values.T, columns=string_genes)
+    print(df_string.shape)
     df_string.index = ["string_" + str(i) for i in df_string.index]
     df_string = df_string.dropna()
+    print(df_string.shape)
     # df_string = df_string.apply(zscore)
     return df_string
 

@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-16 13:16:01
+LastEditTime: 2022-04-25 22:43:50
 '''
 import activeselect
 import pandas as pd
@@ -29,7 +29,7 @@ import model
 import torch
 
 NUM_SIMU = 1
-NUM_SAM = 100
+NUM_SAM = 40
 BATCH_SIZE = 10
 
 
@@ -177,7 +177,9 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                     m = model.train(m, ds)
 
                 else:
-                    kernel = RBF()
+                    kernel = RBF(length_scale=2,
+                                 length_scale_bounds=(1e-8, 1e8))
+                    # print(x, y)
                     gm = GaussianProcessRegressor(kernel=kernel).fit(x, y)
                 # gm = Lasso().fit(x, y)
                 # d["pre"] = gm.predict(x)
@@ -185,9 +187,16 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                 if feature_select:
                     test_x = test_x @ M
                 if deep:
+
                     test_y = testds["y"].to_numpy()
-                    ds = model.getdataset(test_x, test_y)
+                    # print(np.max(test_y), np.min(test_y))
+                    # print(np.max(test_x), np.min(test_x))
+                    # for t in test_x:
+                    #     print(t)
+                    ds = model.getdataset(np.zeros_like(test_x),
+                                          np.zeros_like(test_y))
                 if deep:
+                    # pass
                     testres_active[i, cnt, j] = model.test(m, ds)
                 else:
                     predict_y = gm.predict(test_x)
@@ -237,7 +246,8 @@ def simulate(df, seed, method, feature_select=True, deep=False):
                     trainds.addKnown(du.index[t])
 
                 elif method == "gaussianb":
-                    kernel = RBF()
+                    kernel = RBF(length_scale=2,
+                                 length_scale_bounds=(1e-8, 1e8))
                     gm = GaussianProcessRegressor(kernel=kernel).fit(x, y)
                     for _ in range(BATCH_SIZE):
                         predict, var = gm.predict(dux, return_std=True)
@@ -292,6 +302,19 @@ if __name__ == "__main__":
         data = (dataset.get_my()["y4"], dataset.get_my()["y5"])
     elif args.dataset == "two2":
         data = (dataset.get_my()["y7"], dataset.get_my()["y8"])
+    elif args.dataset == "breast":
+        df = pd.read_csv("./cache/Breast_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        # print(df.shape)
+        df = df.drop(0)
+        df = df[list(range(11))]
+        df = df.dropna()
+        print(df.shape)
+        data = np.array(df[10])
+        # for i in data:
+        #     print(i)
+
     else:
         print("dataset not available")
         exit()
@@ -302,6 +325,15 @@ if __name__ == "__main__":
         feature = dataset.get_string()
     elif args.feature == "my":
         feature = dataset.get_my()["x"]
+    elif args.feature == "breast":
+        df = pd.read_csv("./cache/Breast_TCGA_with_fs.csv",
+                         header=None,
+                         index_col=None)
+        df = df.drop(0)
+        df = df[list(range(11))]
+        df = df.dropna()
+        print(df.shape)
+        feature = df[list(range(9))].values
     else:
         print("feature set not available")
         exit()

@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-14 23:33:14
+LastEditTime: 2022-04-25 22:52:51
 '''
 import torch
 import torch.nn as nn
@@ -49,13 +49,16 @@ class RegressionDataset(Dataset):
 def train(model, dataset):
     cri = nn.MSELoss()
     model.train()
-    opt = optim.SGD(model.parameters(), lr=0.001, momentum=0.99)
+    # opt = optim.SGD(model.parameters(), lr=0.001, momentum=0.99)
+    opt = optim.Adam(model.parameters(), lr=0.001)
     iters = 0
     while True:
         for _, j in enumerate(dataset):
             iters += 1
             x, y = j
             pre = model(x)
+            # print(x, pre)
+            # exit()
             # print(pre.shape, y.shape)
             loss = cri(pre, y)
             # if len(x) < 2:
@@ -98,7 +101,8 @@ class TwoLayer(nn.Module):
     def forward(self, x):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
-        x = torch.sigmoid(self.fc3(x))
+        #x = torch.sigmoid(self.fc3(x))
+        x = torch.relu(self.fc3(x))
         x = self.fc4(x)
         return x.squeeze(1)
 
@@ -107,7 +111,19 @@ if __name__ == "__main__":
 
     with open("./cache/mydataset.pkl", "rb") as f:
         data = pickle.load(f)
+    import pandas as pd
+    df = pd.read_csv("./cache/Breast_TCGA_with_fs.csv",
+                     header=None,
+                     index_col=None)
 
+    print(df.shape)
+    df = df.drop(0)
+    print(df.head())
+    df = df[list(range(11))]
+    df = df.dropna()
+    for i in df[10]:
+        print(i)
+    data = df[10]
     # Ds = RegressionDataset(data["x"],
     #                        np.transpose(np.stack((data["y7"], data["y8"]))))
 
