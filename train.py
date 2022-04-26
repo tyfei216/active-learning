@@ -4,7 +4,7 @@ Description:
 Author: Tianyi Fei
 Date: 1969-12-31 19:00:00
 LastEditors: Tianyi Fei
-LastEditTime: 2022-04-25 22:59:04
+LastEditTime: 2022-04-26 07:34:43
 '''
 import activeselect
 import pandas as pd
@@ -29,7 +29,7 @@ import model
 import torch
 
 NUM_SIMU = 1
-NUM_SAM = 40
+NUM_SAM = 100
 BATCH_SIZE = 10
 
 
